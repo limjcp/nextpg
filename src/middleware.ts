@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
     secret: process.env.AUTH_SECRET,
   });
 
-  // Allow access to login, register, logo, and api routes
+  // Allow access to login, register, logo, and API routes
   if (
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/api/auth") ||
@@ -17,43 +17,63 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // If there's no token, redirect to the sign-in page
   if (!token) {
     return NextResponse.redirect(new URL("/api/auth/signin", request.url));
   }
 
-  // if (
-  //   request.nextUrl.pathname.startsWith("/register") &&
-  //   token.role !== "admin"
-  // ) {
-  //   return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
-  // }
+  // Redirect users based on their role to the appropriate dashboard
+  if (request.nextUrl.pathname === "/") {
+    if (token.role === "student") {
+      return NextResponse.redirect(new URL("/student-dashboard", request.url));
+    }
+    if (token.role === "admin") {
+      return NextResponse.redirect(new URL("/admin-dashboard", request.url));
+    }
+    if (token.role === "staff") {
+      return NextResponse.redirect(new URL("/staff-dashboard", request.url));
+    }
+    if (token.role === "signatory") {
+      return NextResponse.redirect(
+        new URL("/signatory-dashboard", request.url)
+      );
+    }
+  }
 
-  // if (
-  //   (request.nextUrl.pathname.startsWith("/staff-dashboard") ||
-  //     request.nextUrl.pathname.startsWith("/staff-approve") ||
-  //     request.nextUrl.pathname.startsWith("/staff-requirements")) &&
-  //   token.role !== "staff"
-  // ) {
-  //   return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
-  // }
-  // if (
-  //   (request.nextUrl.pathname.startsWith("/signatory-dashboard") ||
-  //     request.nextUrl.pathname.startsWith("/signatory-sign")) &&
-  //   token.role !== "signatory"
-  // ) {
-  //   return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
-  // }
-  // if (
-  //   (request.nextUrl.pathname.startsWith("/student-dashboard") ||
-  //     request.nextUrl.pathname.startsWith("/student-clearance") ||
-  //     request.nextUrl.pathname.startsWith("/student-requirements") ||
-  //     request.nextUrl.pathname.startsWith(
-  //       "/student-clearance/track-clearance"
-  //     )) &&
-  //   token.role !== "student"
-  // ) {
-  //   return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
-  // }
+  // Authorization checks for specific routes
+  if (
+    request.nextUrl.pathname.startsWith("/register") &&
+    token.role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
+  }
+
+  if (
+    (request.nextUrl.pathname.startsWith("/staff-dashboard") ||
+      request.nextUrl.pathname.startsWith("/staff-approve") ||
+      request.nextUrl.pathname.startsWith("/staff-requirements")) &&
+    token.role !== "staff"
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
+  }
+  if (
+    (request.nextUrl.pathname.startsWith("/signatory-dashboard") ||
+      request.nextUrl.pathname.startsWith("/signatory-sign")) &&
+    token.role !== "signatory"
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
+  }
+  if (
+    (request.nextUrl.pathname.startsWith("/student-dashboard") ||
+      request.nextUrl.pathname.startsWith("/student-clearance") ||
+      request.nextUrl.pathname.startsWith("/student-requirements") ||
+      request.nextUrl.pathname.startsWith(
+        "/student-clearance/track-clearance"
+      )) &&
+    token.role !== "student"
+  ) {
+    return NextResponse.redirect(new URL("/unauthorized", request.url)); // Redirect to an unauthorized page
+  }
   return NextResponse.next();
 }
 

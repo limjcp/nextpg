@@ -8,6 +8,7 @@ export default function AuthButton() {
 
   return session?.data?.user ? (
     <Button
+      className="hover:bg-red-500"
       onClick={async () => {
         await signOut();
         await signIn();

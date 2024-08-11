@@ -1,7 +1,10 @@
-import React from "react";
+import ChangePassword from "@/components/ChangePassword";
 
-const Settings = () => {
-  return <div>Settings</div>;
-};
-
-export default Settings;
+export default function Settings() {
+  return (
+    <div>
+      <h1>Settings</h1>
+      <ChangePassword />
+    </div>
+  );
+}
