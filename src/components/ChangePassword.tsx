@@ -46,10 +46,18 @@ export default function ChangePassword() {
   };
 
   return (
-    <div>
-      <h2>Change Password</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="oldPassword">Old Password:</label>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <h2 className="text-2xl font-bold mb-6">Change Password</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm"
+      >
+        <label
+          htmlFor="oldPassword"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Old Password:
+        </label>
         <input
           type="password"
           id="oldPassword"
@@ -57,11 +65,17 @@ export default function ChangePassword() {
           value={formData.oldPassword}
           onChange={handleChange}
           required
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
         <br />
         <br />
 
-        <label htmlFor="newPassword">New Password:</label>
+        <label
+          htmlFor="newPassword"
+          className="block text-sm font-medium text-gray-700"
+        >
+          New Password:
+        </label>
         <input
           type="password"
           id="newPassword"
@@ -69,11 +83,17 @@ export default function ChangePassword() {
           value={formData.newPassword}
           onChange={handleChange}
           required
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
         />
         <br />
         <br />
 
-        <button type="submit">Change Password</button>
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Change Password
+        </button>
       </form>
     </div>
   );

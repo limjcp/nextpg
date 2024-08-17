@@ -17,6 +17,7 @@ import {
   LayoutDashboard,
   Signature,
   ClipboardCheck,
+  ListChecks,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Image from "next/image";
@@ -47,6 +48,8 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
         setSelectedItem("Dashboard");
       } else if (pathname.includes("student-clearance")) {
         setSelectedItem("Clearance");
+      } else if (pathname.includes("student-requirements")) {
+        setSelectedItem("Requirements");
       } else if (pathname.includes("settings")) {
         setSelectedItem("Settings");
       } else {
@@ -89,9 +92,21 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
 
           <Sidebar.Nav.Section>
             <Sidebar.Nav.Section.Item
+              icon={<ListChecks />}
+              label="Requirements"
+              href="/student-requirements"
+              className={`${
+                selectedItem === "Requirements"
+                  ? "border-2 border-white rounded-md"
+                  : ""
+              } hover:border-2 hover:border-white hover:rounded-md`}
+              onClick={() => setSelectedItem("Clients")}
+            />
+
+            <Sidebar.Nav.Section.Item
               icon={<ClipboardCheck />}
               label="Clearance"
-              href="/student-clearance"
+              href="/clearance"
               className={`${
                 selectedItem === "Clearance"
                   ? "border-2 border-white rounded-md"

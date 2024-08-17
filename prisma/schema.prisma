@@ -8,11 +8,18 @@ generator client {
   previewFeatures = ["driverAdapters"]
 }
 
-enum role {
+enum Role {
   student
   signatory
   staff
   admin
+}
+
+enum ClearanceStatus {
+  PENDING
+  IN_PROGRESS
+  CLEARED
+  REJECTED
 }
 
 model User {
@@ -25,10 +32,14 @@ model User {
   username      String?   @unique
   accounts      Account[]
   sessions      Session[]
-  role          role      @default(student)
+  role          Role      @default(student)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  student   Student?
+  staff     Staff?
+  signatory Signatory?
 }
 
 model Account {
@@ -68,4 +79,87 @@ model VerificationToken {
   expires    DateTime
 
   @@id([identifier, token])
+}
+
+model Student {
+  id            String      @id @default(cuid())
+  user          User        @relation(fields: [userId], references: [id])
+  userId        String      @unique
+  studentNumber String      @unique
+  clearances    Clearance[]
+}
+
+model Staff {
+  id       String @id @default(cuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String @unique
+  office   Office @relation(fields: [officeId], references: [id])
+  officeId String
+}
+
+model Signatory {
+  id       String @id @default(cuid())
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String @unique
+  office   Office @relation(fields: [officeId], references: [id])
+  officeId String
+}
+
+model Office {
+  id             String          @id @default(cuid())
+  name           String
+  staff          Staff[]
+  signatory      Signatory[]
+  requirements   Requirement[]
+  clearanceSteps ClearanceStep[]
+}
+
+model Requirement {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  office      Office  @relation(fields: [officeId], references: [id])
+  officeId    String
+}
+
+model Semester {
+  id         String      @id @default(cuid())
+  name       String
+  startDate  DateTime
+  endDate    DateTime
+  clearances Clearance[]
+}
+
+model Clearance {
+  id         String          @id @default(cuid())
+  student    Student         @relation(fields: [studentId], references: [id])
+  studentId  String
+  semester   Semester        @relation(fields: [semesterId], references: [id])
+  semesterId String
+  status     ClearanceStatus @default(PENDING)
+  steps      ClearanceStep[]
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model ClearanceStep {
+  id          String          @id @default(cuid())
+  clearance   Clearance       @relation(fields: [clearanceId], references: [id])
+  clearanceId String
+  office      Office          @relation(fields: [officeId], references: [id])
+  officeId    String
+  status      ClearanceStatus @default(PENDING)
+  signedAt    DateTime?
+  signedBy    String?
+  comments    String?
+}
+
+model Report {
+  id               String   @id @default(cuid())
+  semesterId       String
+  totalStudents    Int
+  clearedStudents  Int
+  pendingStudents  Int
+  rejectedStudents Int
+  generatedAt      DateTime @default(now())
 }
